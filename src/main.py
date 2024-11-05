@@ -10,10 +10,14 @@ import multiprocessing
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
- 
+def start_basic_configuration():
+    multiprocessing.freeze_support()
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+    os.environ['TF_ENABLE_MLIR'] = '1'
+    tf.compat.v1.ConfigProto()
+    tf.compat.v1.RunOptions(report_tensor_allocations_upon_oom=True)
 
 def start_spleeter():
-    
     return Separator('spleeter:2stems')
     
 parent_directory = Path(__file__).resolve().parent.parent
