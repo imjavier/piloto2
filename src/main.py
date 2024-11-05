@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
  
 
 def start_spleeter():
-    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+    
     return Separator('spleeter:2stems')
     
 parent_directory = Path(__file__).resolve().parent.parent
