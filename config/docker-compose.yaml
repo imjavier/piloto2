@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  spleeter:
+    image: deezer/spleeter:conda-2stems
+
+
+    volumes:
+      - ./input:/input
+      - ./output:/output
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+  
+  audio:
+    build:
+      context: ../src
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+    volumes:
+      - ../src:/app
+      - ./input:/input
+      - ./output:/output
+    deploy:
+          resources:
+            limits:
+              memory: 6G
+             
+    ports:
+      - '8000:8000'
+    depends_on:
+      - spleeter
+
+
+    
+
+
+      

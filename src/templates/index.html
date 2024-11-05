@@ -1,0 +1,296 @@
+{% extends './layout.html' %}
+
+
+{% block body %}
+
+<!--
+<form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+
+    <!-- Contenedor del primer archivo de audio --
+    <div class="containe-wav1">
+        <label for="originalAudio" class="form-label">Subir Audio : Original (.wav)</label>
+        <input class="form-control" type="file" id="originalAudio" name="archivo1" accept=".wav">
+    </div>
+
+    <!-- Contenedor del segundo archivo de audio --
+    <div class="containe-wav2">
+        <label for="modifiedAudio" class="form-label">Subir Audio : Modificar (.wav)</label>
+        <input class="form-control" type="file" id="modifiedAudio" name="archivo2" accept=".wav">
+    </div>
+
+    <!-- Contenedor del botón de envío --
+    <div class="container-btn">
+        <!-- Botón para enviar los archivos al servidor --
+        <button type="submit" class="btn btn-outline-dark" id="enviarBtn">Enviar</button>
+    </div>
+</form>-->
+
+<!-- NavBar -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Nombre_proyecto</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="#descripcion">Descripcion</a>
+                <a class="nav-link" href="#aplicacion">Aplicacion</a>
+                <a class="nav-link" href="#colaboradores">Colaboradores</a>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- NavBar -->
+
+<!-- Descripcion -->
+<div class="container-descripcion" id="descripcion">
+    <h2 class="text-center text-white">Descripción</h2>
+    <h3 class="text-white">¿Qué es?</h3>
+    <p class="text-white">
+        Este proyecto es una aplicación web desarrollada utilizando Flask, una microframework de Python, que está
+        vinculada a Spleeter, una herramienta de separación de fuentes musicales creada por Deezer. La aplicación
+        permite a los usuarios cargar archivos de audio y separarlos en sus componentes individuales, como vocales,
+        instrumentos, bajo, batería, entre otros.
+        <br>
+        La interfaz de usuario está construida con HTML, CSS y JavaScript, proporcionando una experiencia interactiva y
+        fácil de usar. Los usuarios pueden subir sus archivos de audio a través de la web, y el servidor, utilizando
+        Spleeter, procesará estos archivos y devolverá las pistas separadas.
+        <br>
+        La integración con Spleeter permite aprovechar sus modelos pre-entrenados para realizar una separación de
+        audio rápida y precisa, facilitando tareas como la creación de remixes, análisis de música, estudios de
+        sonido y otras aplicaciones musicales.
+    </p>
+    <br>
+    <h3 class="text-white">¿Cómo usarlo?</h3>
+    <p class="text-white">
+        <strong>Pasos:</strong>
+    <ol class="text-white">
+        <li>Carga del Archivo de Audio: El usuario accede a la aplicación web y se encuentra con una interfaz amigable
+            donde puede seleccionar y cargar un archivo de audio desde su dispositivo.</li>
+        <li>Envío del Archivo al Servidor: Una vez cargado el archivo, se envía al servidor utilizando una solicitud
+            HTTP. Flask maneja esta solicitud y recibe el archivo de audio.</li>
+        <li>Procesamiento con Spleeter: El servidor, utilizando Spleeter, procesa el archivo de audio. Spleeter aplica
+            sus modelos pre-entrenados para separar las distintas fuentes de sonido (por ejemplo, vocales, batería,
+            bajo, y otros instrumentos) presentes en el archivo de audio.</li>
+        <li>Generación de Archivos Separados: Spleeter produce archivos de audio separados para cada fuente
+            identificada. Estos archivos se almacenan temporalmente en el servidor.</li>
+        <li>Respuesta al Usuario: Una vez que Spleeter completa el procesamiento, Flask envía una respuesta al usuario,
+            proporcionando enlaces para descargar cada uno de los archivos de audio separados.</li>
+        <li>Interfaz de Descarga: La interfaz de usuario se actualiza para mostrar enlaces de descarga para cada pista
+            separada, permitiendo al usuario descargar y escuchar cada componente de forma individual.</li>
+        <li>Opcional: Manejo de Errores y Mensajes Informativos: La aplicación incluye manejo de errores para notificar
+            al usuario si algo sale mal durante el proceso de carga o separación. También puede mostrar mensajes
+            informativos sobre el progreso del procesamiento.</li>
+    </ol>
+    </p>
+    <br>
+    <h3 class="text-white">¿Dónde se puede usar?</h3>
+    <p class="text-white">
+        <strong>Aplicaciones:</strong>
+    <ol class="text-white">
+        <li>Producción Musical: Los productores musicales pueden utilizar tu aplicación para separar pistas de audio y
+            trabajar con componentes individuales, como vocales e instrumentos, facilitando el proceso de mezcla y
+            remezcla de canciones.</li>
+        <li>Análisis de Música: Los investigadores y aficionados pueden emplear tu herramienta para analizar la
+            estructura y los elementos de las composiciones musicales, estudiando la distribución de sonidos y la
+            contribución de diferentes instrumentos.</li>
+        <li>Edición de Audio: Los editores de audio pueden beneficiarse de la capacidad de separar fuentes sonoras en
+            archivos individuales, lo que les permite realizar ajustes específicos a cada componente y mejorar la
+            calidad del sonido en producciones multimedia.</li>
+        <li>Educación Musical: En entornos educativos, tu aplicación puede ser una herramienta valiosa para enseñar
+            conceptos de mezcla de audio y producción musical, permitiendo a los estudiantes experimentar con la
+            separación de fuentes y entender cómo se construyen las grabaciones musicales.</li>
+        <li>Desarrollo de Software: Desarrolladores de software pueden integrar tu proyecto en aplicaciones más grandes
+            relacionadas con la música y el audio, agregando capacidades de separación de fuentes para mejorar la
+            experiencia del usuario y la funcionalidad del producto final.</li>
+        <li>Creación de Contenido Multimedia: Creadores de contenido multimedia, como cineastas y creadores de podcasts,
+            pueden utilizar tu herramienta para mejorar la calidad de audio de sus producciones, aislando y ajustando
+            elementos sonoros específicos según sea necesario.</li>
+        <li>Investigación en Procesamiento de Audio: Los investigadores en el campo del procesamiento de audio pueden
+            utilizar tu proyecto como una herramienta para explorar técnicas de separación de fuentes y desarrollar
+            nuevas metodologías para el análisis y la manipulación de señales de audio.</li>
+    </ol>
+    </p>
+    <br>
+    <h3 class="text-white">Referencias</h3>
+    <p class="text-white">
+        <strong>Spleeter - Deezer:</strong> Romain Hennequin, Anis Khlif, Felix Voituret, y Manuel Moussallam.
+        "Spleeter: A Fast and State-of-the Art Music Source Separation Tool with Pre-trained Models." Deezer Research,
+        2020. <a href="https://github.com/deezer/spleeter" class="text-white">https://github.com/deezer/spleeter</a>
+    </p>
+
+</div>
+<!-- Descripcion -->
+
+
+<hr class="white-line">
+
+
+<!-- Aplicacion -->
+<div class="container-aplicacion" id="aplicacion">
+    <h2 class="text-center text-white border-light">Aplicación</h2>
+
+    <form class="was-validated" id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+
+        <!--modelo-->
+        <div class="mb-3">
+            <select class="form-select" id="modelSelect" required aria-label="select example" name="modelo">
+                <option value="">Selecciona modelo</option>
+                <option value="model_voz">Extracción de voz</option>
+                <option value="model_music">Extracción de musica</option>
+            </select>
+            <div class="invalid-feedback">Selecciona un modelo</div>
+        </div>
+
+        <!--cancion-->
+        <div class="mb-3">
+            <input type="file" class="form-control" id="fileInput" aria-label="file example" required
+                accept=".mp3, .wav, .ogg" name="cancion">
+            <div class="invalid-feedback">Suba un archivo de música o audio</div>
+        </div>
+
+        <!-- Contenedor del botón de envío -->
+        <div class="mb-3 container-btn">
+            <button class="btn btn-primary btn-form-app" type="submit" data-bs-toggle="modal"
+                data-bs-target="#exampleModal"  id="enviarBtn">Iniciar</button>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ejecutando aplicacion</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Se esta separando las fuentes de audio, por favor espere...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+    </form>
+</div>
+<!-- Aplicacion -->
+
+
+<hr class="white-line">
+
+
+<!-- Colaboradores -->
+<div class="colaboradores" id="colaboradores">
+    <h2 class="text-center text-white">Colaboradores</h2>
+
+    <div class="card-group">
+        <div class="card bg-dark text-white border-light">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title text-center">Jr Santiago Ravelo</h5>
+                <p class="card-text" style="text-align: justify;">Estudiante en los últimos semestres de ingeniería de
+                    sistemas, con sólidos
+                    conocimientos en
+                    desarrollo web y experiencia previa en automatización (RPA). Consciente de los estándares de
+                    calidad establecidos por ISO e IEEE, demuestro habilidades organizativas y colaborativas, trabajando
+                    eficazmente en equipos empresariales.</p>
+                <p class="card-text text-center"><small class="text-primary">Desarrollador</small></p>
+            </div>
+        </div>
+        <div class="card bg-dark text-white border-light">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title text-center">Jorge Ibarra</h5>
+                <p class="card-text" style="text-align: justify;">This card has supporting text below as a natural
+                    lead-in to additional content.</p>
+                <p class="card-text text-center"><small class="text-primary">Desarrollador</small></p>
+            </div>
+        </div>
+        <div class="card bg-dark text-white border-light">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title text-center">Javier Villareal</h5>
+                <p class="card-text" style="text-align: justify;">This is a wider card with supporting text below as a
+                    natural lead-in to additional
+                    content. This card has even longer content than the first to show that equal height action.</p>
+                <p class="card-text text-center"><small class="text-primary">Investigador</small></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Colaboradores -->
+
+
+<hr class="white-line">
+
+
+<!-- foother -->
+<footer class="text-center text-lg-start text-white">
+    <!-- Grid container -->
+    <div class="container p-4">
+        <!--Grid row-->
+        <div class="row">
+            <!--Grid column-->
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Explora las Posibilidades</h5>
+                <p>
+                    Esta aplicación web desarrollada con Flask y Spleeter ofrece una solución versátil para separar
+                    fuentes musicales en archivos de audio. Desde la producción musical hasta la edición de audio,
+                    pasando por la investigación en procesamiento de audio, nuestro proyecto proporciona una herramienta
+                    poderosa que puede ser utilizada en una variedad de aplicaciones. Descubre cómo puedes mejorar tus
+                    producciones musicales, analizar composiciones, educar en música y mucho más con esta aplicación
+                    innovadora.
+                </p>
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Proyecto</h5>
+
+                <ul class="list-unstyled mb-0">
+                    <li>
+                        <a href="#!" class="text-white">GitHub</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">CoLab</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">IDX</a>
+                    </li>
+                </ul>
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Contactanos</h5>
+
+                <ul class="list-unstyled mb-0">
+                    <li>
+                        <a href="#!" class="text-white">Javier Villareal</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Jorge Ibarra</a>
+                    </li>
+                    <li>
+                        <a href="#!" class="text-white">Jr Ravelo</a>
+                    </li>
+                </ul>
+            </div>
+            <!--Grid column-->
+        </div>
+        <!--Grid row-->
+    </div>
+</footer>
+<!-- foother -->
+
+{% endblock %}
