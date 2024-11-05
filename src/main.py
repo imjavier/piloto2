@@ -16,8 +16,10 @@ def start_basic_configuration():
     os.environ['TF_ENABLE_MLIR'] = '1'
     tf.compat.v1.ConfigProto()
     tf.compat.v1.RunOptions(report_tensor_allocations_upon_oom=True)
+    
 
 def start_spleeter():
+    start_basic_configuration()
     return Separator('spleeter:2stems')
     
 parent_directory = Path(__file__).resolve().parent.parent
