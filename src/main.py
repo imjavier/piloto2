@@ -51,6 +51,7 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
     vocals_path = UPLOAD_FOLDER / file_base_name / 'vocals.wav'
     accompaniment_path = UPLOAD_FOLDER / file_base_name / 'accompaniment.wav'
 
+    print("SE LLEGA HASTA AQUí SIN PROBLEMA")
     if modelo == 'model_music':
         return StreamingResponse(
             open(accompaniment_path, "rb"), 
