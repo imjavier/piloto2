@@ -1,8 +1,9 @@
+from urllib import response
 from spleeter.separator import Separator
 from io import BytesIO
 import os
 import tempfile
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import StreamingResponse
 from pathlib import Path
 import tensorflow as tf
@@ -44,8 +45,11 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
         temp_audio.write(song_buffer.getvalue())
         temp_audio.flush()
         temp_audio_path = temp_audio.name
+    try:
 
-    separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
+        separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
+    except:
+        raise HTTPException(status_code=400, detail="El parámetro debe ser un número positivo.")
     print('DESPUES DE LA TRANSFORMACIÓN LLEGA SIN PROBLEMA')
     filename = os.path.basename(temp_audio_path)
     file_base_name = filename.split(".")[0] 
