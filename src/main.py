@@ -10,8 +10,7 @@ import tensorflow as tf
 import multiprocessing
 import os
 from fastapi.middleware.cors import CORSMiddleware
-import threading
-import time
+import asyncio
 import logging
 
 # Configuración de logging
@@ -43,21 +42,24 @@ app.add_middleware(
 )
 
 # Función que simula un proceso largo de separación
-def long_running_task(separator, temp_audio_path, UPLOAD_FOLDER):
+async def long_running_task(separator, temp_audio_path, UPLOAD_FOLDER):
     logger.info("Iniciando el proceso de separación...")
-    try:    
+    try:
+        # Separación del archivo de audio
         separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
-    except:
         logger.info("Proceso completado.")
+    except Exception as e:
+        logger.error(f"Error en el proceso de separación: {e}")
+        raise HTTPException(status_code=500, detail=f"Error durante la separación: {e}")
 
 @app.post("/upload/")
 async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
     song_buffer = BytesIO(await cancion.read())
     logger.info("Archivo recibido correctamente.")
-    
+
     # Inicializar el separador de Spleeter
     separator = start_spleeter()
-    
+
     # Guardar el archivo temporalmente en el servidor
     with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_audio:
         temp_audio.write(song_buffer.getvalue())
@@ -65,15 +67,9 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
         temp_audio_path = temp_audio.name
 
     try:
-        # Ejecutar el proceso en un hilo separado
-        thread = threading.Thread(target=long_running_task, args=(separator, temp_audio_path, UPLOAD_FOLDER))
-        thread.start()
-        logger.info("El proceso de separación está en curso.")
-        
-        # Mientras el hilo esté ejecutándose, el servidor sigue procesando otras cosas
-        while thread.is_alive():
-            logger.info("El proceso sigue ejecutándose en segundo plano...")
-            time.sleep(1)
+        # Ejecutar el proceso de separación de manera asincrónica
+        await asyncio.to_thread(long_running_task, separator, temp_audio_path, UPLOAD_FOLDER)
+        logger.info("El proceso de separación ha finalizado.")
 
     except Exception as e:
         logger.error(f"Error al iniciar el proceso: {e}")
@@ -83,24 +79,20 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
 
     # Obtener las rutas de los archivos separados
     filename = os.path.basename(temp_audio_path)
-    file_base_name = filename.split(".")[0] 
+    file_base_name = filename.split(".")[0]
     vocals_path = UPLOAD_FOLDER / file_base_name / 'vocals.wav'
     accompaniment_path = UPLOAD_FOLDER / file_base_name / 'accompaniment.wav'
 
     # Devolver el archivo adecuado basado en el modelo solicitado
     if modelo == 'model_music':
         return StreamingResponse(
-            open(accompaniment_path, "rb"), 
-            media_type="audio/wav", 
-            headers={
-                "Content-Disposition": f"attachment; filename={accompaniment_path.name}"
-            }
+            open(accompaniment_path, "rb"),
+            media_type="audio/wav",
+            headers={"Content-Disposition": f"attachment; filename={accompaniment_path.name}"}
         )
-    
+
     return StreamingResponse(
-        open(vocals_path, "rb"), 
+        open(vocals_path, "rb"),
         media_type="audio/wav",
-        headers={
-            "Content-Disposition": f"attachment; filename={vocals_path.name}"
-        }
+        headers={"Content-Disposition": f"attachment; filename={vocals_path.name}"}
     )
