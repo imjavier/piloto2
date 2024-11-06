@@ -46,6 +46,7 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
         temp_audio_path = temp_audio.name
 
     separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
+    print('DESPUES DE LA TRANSFORMACIÓN LLEGA SIN PROBLEMA')
     filename = os.path.basename(temp_audio_path)
     file_base_name = filename.split(".")[0] 
     vocals_path = UPLOAD_FOLDER / file_base_name / 'vocals.wav'
