@@ -10,7 +10,6 @@ import tensorflow as tf
 import multiprocessing
 import os
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
 import logging
 
 # Configuración de logging
@@ -42,7 +41,7 @@ app.add_middleware(
 )
 
 # Función que simula un proceso largo de separación
-async def long_running_task(separator, temp_audio_path, UPLOAD_FOLDER):
+def long_running_task(separator, temp_audio_path, UPLOAD_FOLDER):
     logger.info("Iniciando el proceso de separación...")
     try:
         # Separación del archivo de audio
@@ -67,8 +66,8 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
         temp_audio_path = temp_audio.name
 
     try:
-        # Ejecutar el proceso de separación de manera asincrónica
-        await asyncio.to_thread(long_running_task, separator, temp_audio_path, UPLOAD_FOLDER)
+        # Ejecutar el proceso de separación de manera bloqueante (sin hilos)
+        long_running_task(separator, temp_audio_path, UPLOAD_FOLDER)
         logger.info("El proceso de separación ha finalizado.")
 
     except Exception as e:
