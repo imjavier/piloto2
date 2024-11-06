@@ -45,8 +45,10 @@ app.add_middleware(
 # Función que simula un proceso largo de separación
 def long_running_task(separator, temp_audio_path, UPLOAD_FOLDER):
     logger.info("Iniciando el proceso de separación...")
-    separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
-    logger.info("Proceso completado.")
+    try:    
+        separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
+    except:
+        logger.info("Proceso completado.")
 
 @app.post("/upload/")
 async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
