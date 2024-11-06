@@ -10,6 +10,8 @@ import tensorflow as tf
 import multiprocessing
 import os
 from fastapi.middleware.cors import CORSMiddleware
+import threading
+import time
 
 def start_basic_configuration():
     multiprocessing.freeze_support()
@@ -35,6 +37,13 @@ app.add_middleware(
     allow_methods=["*"],  # Permitir todos los métodos (GET, POST, etc.)
     allow_headers=["*"],  # Permitir todos los encabezados
 )
+
+def long_running_task(separator,temp_audio_path, UPLOAD_FOLDER):
+    # Simula un proceso largo
+    separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
+    print("Proceso completado.")
+
+
 @app.post("/upload/")
 async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
     
@@ -46,8 +55,14 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
         temp_audio.flush()
         temp_audio_path = temp_audio.name
     try:
+        thread = threading.Thread(target=long_running_task, args=(separator,temp_audio_path, UPLOAD_FOLDER))
+        thread.start()
 
-        separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
+# Mientras el hilo esté en ejecución, puedes hacer otras cosas
+        while thread.is_alive():
+          print("El proceso sigue ejecutándose...")
+          time.sleep(1) 
+
     except:
         raise HTTPException(status_code=400, detail="El parámetro debe ser un número positivo.")
     print('DESPUES DE LA TRANSFORMACIÓN LLEGA SIN PROBLEMA')
