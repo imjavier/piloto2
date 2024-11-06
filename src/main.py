@@ -57,7 +57,10 @@ async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
     try:
         thread = threading.Thread(target=long_running_task, args=(separator,temp_audio_path, UPLOAD_FOLDER))
         thread.start()
-
+        print('ho ho ho')
+        print('ho ho ho')
+        print('ho ho ho')
+        print('ho ho ho')
 # Mientras el hilo esté en ejecución, puedes hacer otras cosas
         while thread.is_alive():
           print("El proceso sigue ejecutándose...")
