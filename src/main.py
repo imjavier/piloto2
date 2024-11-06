@@ -38,7 +38,7 @@ app.add_middleware(
 async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
     
     song_buffer = BytesIO(await cancion.read())
-    
+    print("SE LLEGA HASTA AQUí SIN PROBLEMA")
     separator = start_spleeter()
     with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_audio:
         temp_audio.write(song_buffer.getvalue())
