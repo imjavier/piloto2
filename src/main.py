@@ -12,6 +12,11 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 import threading
 import time
+import logging
+
+# Configuración de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def start_basic_configuration():
     multiprocessing.freeze_support()
@@ -22,13 +27,12 @@ def start_basic_configuration():
 
 def start_spleeter():
     return Separator('spleeter:2stems')
-    
+
 parent_directory = Path(__file__).resolve().parent.parent
 UPLOAD_FOLDER = parent_directory / 'audios'
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -38,43 +42,50 @@ app.add_middleware(
     allow_headers=["*"],  # Permitir todos los encabezados
 )
 
-def long_running_task(separator,temp_audio_path, UPLOAD_FOLDER):
-    # Simula un proceso largo
+# Función que simula un proceso largo de separación
+def long_running_task(separator, temp_audio_path, UPLOAD_FOLDER):
+    logger.info("Iniciando el proceso de separación...")
     separator.separate_to_file(temp_audio_path, UPLOAD_FOLDER)
-    print("Proceso completado.")
-
+    logger.info("Proceso completado.")
 
 @app.post("/upload/")
 async def upload_file(cancion: UploadFile = File(...), modelo: str = Form(...)):
-    
     song_buffer = BytesIO(await cancion.read())
-    print("SE LLEGA HASTA AQUí SIN PROBLEMA")
+    logger.info("Archivo recibido correctamente.")
+    
+    # Inicializar el separador de Spleeter
     separator = start_spleeter()
+    
+    # Guardar el archivo temporalmente en el servidor
     with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_audio:
         temp_audio.write(song_buffer.getvalue())
         temp_audio.flush()
         temp_audio_path = temp_audio.name
-    try:
-        thread = threading.Thread(target=long_running_task, args=(separator,temp_audio_path, UPLOAD_FOLDER))
-        thread.start()
-        print('ho ho ho')
-        print('ho ho ho')
-        print('ho ho ho')
-        print('ho ho ho')
-# Mientras el hilo esté en ejecución, puedes hacer otras cosas
-        while thread.is_alive():
-          print("El proceso sigue ejecutándose...")
-          time.sleep(1) 
 
-    except:
-        raise HTTPException(status_code=400, detail="El parámetro debe ser un número positivo.")
-    print('DESPUES DE LA TRANSFORMACIÓN LLEGA SIN PROBLEMA')
+    try:
+        # Ejecutar el proceso en un hilo separado
+        thread = threading.Thread(target=long_running_task, args=(separator, temp_audio_path, UPLOAD_FOLDER))
+        thread.start()
+        logger.info("El proceso de separación está en curso.")
+        
+        # Mientras el hilo esté ejecutándose, el servidor sigue procesando otras cosas
+        while thread.is_alive():
+            logger.info("El proceso sigue ejecutándose en segundo plano...")
+            time.sleep(1)
+
+    except Exception as e:
+        logger.error(f"Error al iniciar el proceso: {e}")
+        raise HTTPException(status_code=500, detail="Hubo un error en el servidor.")
+
+    logger.info("Proceso de separación completado.")
+
+    # Obtener las rutas de los archivos separados
     filename = os.path.basename(temp_audio_path)
     file_base_name = filename.split(".")[0] 
     vocals_path = UPLOAD_FOLDER / file_base_name / 'vocals.wav'
     accompaniment_path = UPLOAD_FOLDER / file_base_name / 'accompaniment.wav'
 
-    print("SE LLEGA HASTA AQUí SIN PROBLEMA")
+    # Devolver el archivo adecuado basado en el modelo solicitado
     if modelo == 'model_music':
         return StreamingResponse(
             open(accompaniment_path, "rb"), 
